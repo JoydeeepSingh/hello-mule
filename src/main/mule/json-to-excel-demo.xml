@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="334cd5e3-56a4-41ca-be9a-a74ee5ca0b0d" basePath="api" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="json-to-excel-demoFlow1" doc:id="9ab53985-bba2-4493-83a8-739430d5fd60" >
+		<http:listener doc:name="Listener" doc:id="61e2b45b-6224-4e57-822c-82fcb6b31539" config-ref="HTTP_Listener_config" path="api"/>
+		<ee:transform doc:name="Transform Message" doc:id="fb7c7e84-8607-4f5b-93f1-33e49d81b010" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xlsx
+---
+{
+	Sheet1: payload map ( payload01 , indexOfPayload01 ) -> {
+		id: payload01.id,
+		name: payload01.name,
+		email: payload01.email,
+		password: payload01.password
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="1d649b1e-e5c0-45e3-b25a-7e9a23e4713b" path="C:\Users\DELL\Documents\Book1.xlsx"/>
+	</flow>
+</mule>
